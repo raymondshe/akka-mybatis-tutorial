@@ -9,4 +9,8 @@
             #{orderId}, #{executionDate}, #{orderType}, #{executionPrice}, #{symbol}, #{userId}
           )
     </insert>
+
+    <select id="getOrders" resultType="tutorial.om.Order">
+        SELECT * FROM OrderLog;
+    </select>
 </mapper>
