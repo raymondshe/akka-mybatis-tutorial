@@ -14,22 +14,22 @@ import java.sql.SQLException;
 public class OrderTypeEnumTypeHandler implements TypeHandler<OrderType> {
 
   @Override
-  public void setParameter(PreparedStatement preparedStatement, int i, OrderType orderType, JdbcType jdbcType) throws SQLException {
-    preparedStatement.setString(i, orderType.getName());
+  public void setParameter(PreparedStatement preparedStatement, int parameterIndex, OrderType orderType, JdbcType jdbcType) throws SQLException {
+    preparedStatement.setString(parameterIndex, orderType.getName());
   }
 
   @Override
-  public OrderType getResult(ResultSet resultSet, String param) throws SQLException {
-    return OrderType.getEnum(resultSet.getString(param));
+  public OrderType getResult(ResultSet resultSet, String columnName) throws SQLException {
+    return OrderType.getEnum(resultSet.getString(columnName));
   }
 
   @Override
-  public OrderType getResult(ResultSet resultSet, int col) throws SQLException {
-    return OrderType.getEnum(resultSet.getString(col));
+  public OrderType getResult(ResultSet resultSet, int columnIndex) throws SQLException {
+    return OrderType.getEnum(resultSet.getString(columnIndex));
   }
 
   @Override
-  public OrderType getResult(CallableStatement callableStatement, int i) throws SQLException {
-    return null;
+  public OrderType getResult(CallableStatement callableStatement, int columnIndex) throws SQLException {
+    return OrderType.getEnum(callableStatement.getString(columnIndex));
   }
 }
