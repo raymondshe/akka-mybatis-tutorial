@@ -37,10 +37,13 @@ public class Config {
 
   @Bean
   public SqlSessionFactory sqlSessionFactory() throws Exception {
-    SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
-    sessionFactory.setDataSource(dataSource());
-    sessionFactory.setMapperLocations(mappers);
-    return sessionFactory.getObject();
+    return new SqlSessionFactoryBean() {
+      {
+        setDataSource(dataSource());
+        setMapperLocations(mappers);
+        setTypeHandlersPackage("tutorial.dal");
+      }
+    }.getObject();
   }
 
   @Bean

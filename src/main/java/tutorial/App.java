@@ -32,6 +32,17 @@ public class App {
     }
   }
 
+  private static void generateRequests(ConfigurableApplicationContext context) {
+    ExecutionContextExecutor executor = context.getBean(ActorSystem.class).dispatcher();
+
+    OrderGateway orderGateway = context.getBean(OrderGateway.class);
+    IntStream.range(0, ORDER_COUNT).forEach(i ->
+            future(() -> {
+              orderGateway.placeOrder();
+              return 1;
+            }, executor));
+  }
+
   private static void waitForPersistence(ConfigurableApplicationContext context) throws InterruptedException {
     OrderDao orderDao = context.getBean(OrderDao.class);
 
@@ -45,17 +56,6 @@ public class App {
     }
 
     System.out.println("Orders in db: ");
-    orderDao.getOrders().forEach(o -> System.out.println(o.toString()));
-  }
-
-  private static void generateRequests(ConfigurableApplicationContext context) {
-    ExecutionContextExecutor executor = context.getBean(ActorSystem.class).dispatcher();
-
-    OrderGateway orderGateway = context.getBean(OrderGateway.class);
-    IntStream.range(0, ORDER_COUNT).forEach(i ->
-            future(() -> {
-              orderGateway.placeOrder();
-              return 1;
-            }, executor));
+    orderDao.getOrders().forEach(System.out::println);
   }
 }
