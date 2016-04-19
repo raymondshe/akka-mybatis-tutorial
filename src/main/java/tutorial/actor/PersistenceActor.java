@@ -23,7 +23,7 @@ public class PersistenceActor extends UntypedActor {
 
   @Override
   public void onReceive(Object message) throws Exception {
-    randomFail(message);
+    //randomFail(message);
 
     if (message instanceof PreparedOrder) {
       PreparedOrder preparedOrder = (PreparedOrder) message;

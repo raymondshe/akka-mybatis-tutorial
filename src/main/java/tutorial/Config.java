@@ -1,5 +1,6 @@
 package tutorial;
 
+import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -9,13 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
+import javax.inject.Named;
 import javax.sql.DataSource;
 
 import static tutorial.spring.SpringExtension.SpringExtProvider;
 
+@ComponentScan
 @Configuration
 public class Config {
   @Autowired
@@ -57,5 +61,17 @@ public class Config {
     // initialize the application context in the Akka Spring Extension
     SpringExtProvider.get(system).initialize(applicationContext);
     return system;
+  }
+
+  @Bean
+  @Named("OrderProcessorActor")
+  public ActorRef orderProcessor() {
+    return actorSystem().actorOf(SpringExtProvider.get(actorSystem()).props("OrderProcessorActor"), "orderProcessor");
+  }
+
+  @Bean
+  @Named("OrderIdGenerator")
+  public ActorRef orderIdGenerator() {
+    return actorSystem().actorOf(SpringExtProvider.get(actorSystem()).props("OrderIdGenerator"), "orderIdGenerator");
   }
 }

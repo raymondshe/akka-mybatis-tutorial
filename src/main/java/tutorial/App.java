@@ -3,7 +3,7 @@ package tutorial;
 import akka.actor.ActorSystem;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import scala.concurrent.ExecutionContextExecutor;
 import tutorial.dal.OrderDao;
 import tutorial.gateway.OrderGateway;
@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
 
 import static akka.dispatch.Futures.future;
 
-@ComponentScan
+@Import(Config.class)
 public class App {
   private static final int ORDER_COUNT = 10;
   private static final int MAX_DELAY = 30_000;
