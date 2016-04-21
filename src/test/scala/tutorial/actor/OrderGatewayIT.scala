@@ -3,7 +3,7 @@ package tutorial.actor
 import javax.inject.{Inject, Named}
 
 import akka.actor.ActorSystem
-import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestKitBase}
+import akka.testkit.{ImplicitSender, TestKit, TestKitBase}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike}
 import org.springframework.context.annotation._
@@ -12,14 +12,15 @@ import tutorial.dal.OrderDao
 import tutorial.gateway.OrderGateway
 import tutorial.spring.SpringExtension._
 
-class OrderProcessorIT extends TestKitBase with FlatSpecLike with ImplicitSender with BeforeAndAfterAll with MockFactory {
-  implicit lazy val system = OrderProcessorIT.ctx.getBean(classOf[ActorSystem])
-
-  val orderDao: OrderDao = OrderProcessorIT.ctx.getBean(classOf[OrderDao])
-
-  override def afterAll {
-    TestKit.shutdownActorSystem(system)
+class OrderGatewayIT extends TestKitBase with FlatSpecLike with ImplicitSender with BeforeAndAfterAll with MockFactory {
+  lazy val ctx: AnnotationConfigApplicationContext = new AnnotationConfigApplicationContext() {
+    register(classOf[TestConfig])
+    refresh()
   }
+  implicit lazy val system = ctx.getBean(classOf[ActorSystem])
+  val orderDao = ctx.getBean(classOf[OrderDao])
+
+  override def afterAll = TestKit.shutdownActorSystem(system)
 
   behavior of "OrderGateway"
 
@@ -32,19 +33,12 @@ class OrderProcessorIT extends TestKitBase with FlatSpecLike with ImplicitSender
     6) Verify Dao is triggered with Prepared order.
      */
     //given
-    val orderGateway = OrderProcessorIT.ctx.getBean(classOf[OrderGateway])
+    val orderGateway = ctx.getBean(classOf[OrderGateway])
     //when
     orderDao.saveOrder _ expects * atLeastOnce()
-    val order = orderGateway.placeOrder()
+    orderGateway.placeOrder()
     //then
-    Thread.sleep(5000)
-  }
-}
-
-object OrderProcessorIT {
-  lazy val ctx: AnnotationConfigApplicationContext = new AnnotationConfigApplicationContext() {
-    register(classOf[TestConfig])
-    refresh()
+    Thread.sleep(3000)
   }
 }
 
@@ -59,5 +53,5 @@ class TestConfig extends FlatSpecLike with MockFactory {
 
   @Bean
   @Named("OrderProcessorActor")
-  def orderProcessor = TestActorRef(SpringExtProvider.get(system).props("OrderProcessorActor"), "orderProcessor")
+  def orderProcessor = system.actorOf(SpringExtProvider.get(system).props("OrderProcessorActor"), "orderProcessor")
 }
