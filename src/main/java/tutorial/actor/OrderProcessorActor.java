@@ -2,7 +2,6 @@ package tutorial.actor;
 
 import akka.actor.ActorPath;
 import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.Function;
@@ -22,14 +21,15 @@ import javax.inject.Named;
 public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDelivery {
   private LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
-  @Inject
-  private ActorSystem system;
-  @Inject
-  @Named("OrderIdGenerator")
   private ActorRef orderIdGenerator;
-  @Inject
-  @Named("PersistenceActor")
   private ActorPath persistenceRouter;
+
+  @Inject
+  public OrderProcessorActor(
+          @Named("OrderIdGenerator") ActorRef orderIdGenerator, @Named("PersistenceActor") ActorPath persistenceRouter) {
+    this.orderIdGenerator = orderIdGenerator;
+    this.persistenceRouter = persistenceRouter;
+  }
 
   @Override
   public void onReceiveCommand(Object msg) throws Exception {
