@@ -1,7 +1,9 @@
 package tutorial;
 
+import akka.actor.ActorPath;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.routing.RoundRobinPool;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -22,6 +24,8 @@ import static tutorial.spring.SpringExtension.SpringExtProvider;
 @ComponentScan
 @Configuration
 public class Config {
+  private static final int PERSISTENCE_ROUTEE_COUNT = 5;
+
   @Autowired
   private ApplicationContext applicationContext;
   @Value("classpath*:/tutorial/dal/**/*.xml")
@@ -73,5 +77,14 @@ public class Config {
   @Named("OrderIdGenerator")
   public ActorRef orderIdGenerator() {
     return actorSystem().actorOf(SpringExtProvider.get(actorSystem()).props("OrderIdGenerator"), "orderIdGenerator");
+  }
+
+  @Bean
+  @Named("PersistenceActor")
+  public ActorPath persistence() {
+    return actorSystem().actorOf(
+            new RoundRobinPool(PERSISTENCE_ROUTEE_COUNT).props(SpringExtProvider.get(actorSystem()).props("PersistenceActor")),
+            "persistenceRouter"
+    ).path();
   }
 }

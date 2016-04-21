@@ -1,4 +1,4 @@
-package tutorial.actor
+package tutorial.gateway
 
 import javax.inject.{Inject, Named}
 
@@ -9,7 +9,6 @@ import org.scalatest.{BeforeAndAfterAll, FlatSpecLike}
 import org.springframework.context.annotation._
 import tutorial.Config
 import tutorial.dal.OrderDao
-import tutorial.gateway.OrderGateway
 import tutorial.spring.SpringExtension._
 
 class OrderGatewayIT extends TestKitBase with FlatSpecLike with ImplicitSender with BeforeAndAfterAll with MockFactory {

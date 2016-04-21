@@ -7,7 +7,6 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.Function;
 import akka.persistence.UntypedPersistentActorWithAtLeastOnceDelivery;
-import akka.routing.RoundRobinPool;
 import org.springframework.context.annotation.Scope;
 import tutorial.om.Order;
 import tutorial.om.message.NewOrder;
@@ -15,16 +14,12 @@ import tutorial.om.message.PersistedOrder;
 import tutorial.om.message.PreparedOrder;
 import tutorial.om.message.SequenceOrder;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import static tutorial.spring.SpringExtension.SpringExtProvider;
 
 @Named("OrderProcessorActor")
 @Scope("prototype")
 public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDelivery {
-  private static final int ROUTEE_COUNT = 5;
   private LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
   @Inject
@@ -32,15 +27,9 @@ public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDe
   @Inject
   @Named("OrderIdGenerator")
   private ActorRef orderIdGenerator;
+  @Inject
+  @Named("PersistenceActor")
   private ActorPath persistenceRouter;
-
-  @PostConstruct
-  public void createActors() {
-    persistenceRouter = getContext().actorOf(
-            new RoundRobinPool(ROUTEE_COUNT).props(SpringExtProvider.get(system).props("PersistenceActor")),
-            "persistenceRouter"
-    ).path();
-  }
 
   @Override
   public void onReceiveCommand(Object msg) throws Exception {
