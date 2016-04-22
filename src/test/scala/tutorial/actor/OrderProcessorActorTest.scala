@@ -4,12 +4,14 @@ import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
 import tutorial.gateway.OrderUtil._
-import tutorial.om.message.{NewOrder, PreparedOrder}
+import tutorial.om.message.{NewOrder, PreparedOrder, SequenceOrder}
+
+import scala.language.postfixOps
 
 class OrderProcessorActorTest extends TestKit(ActorSystem("MySpec")) with FlatSpecLike with ImplicitSender
   with BeforeAndAfterAll with Matchers {
 
-  it should "process incoming order" in {
+  it should "generate id and persist incoming order" in {
     //given
     val orderIdGenerator = TestProbe()
     val persistence = TestProbe()
@@ -19,9 +21,15 @@ class OrderProcessorActorTest extends TestKit(ActorSystem("MySpec")) with FlatSp
     orderProcessor ! new NewOrder(order)
     //then
     val receivedOrder = orderIdGenerator.expectMsg(order)
-    receivedOrder should be (order)
+    receivedOrder should be(order)
+
+    //given
+    order.setOrderId(1)
+    //when
+    orderProcessor ! new SequenceOrder(order)
+    //then
     val preparedOrder = persistence.expectMsgAnyClassOf(classOf[PreparedOrder])
-    preparedOrder.order.getOrderId shouldNot be(-1)
+    preparedOrder.order.getOrderId should be(1)
   }
 
   override def afterAll = TestKit.shutdownActorSystem(system)
