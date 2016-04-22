@@ -1,6 +1,7 @@
 package tutorial.om;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -60,6 +61,24 @@ final public class Order implements Serializable {
 
   public void setUserId(int userId) {
     this.userId = userId;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Order order = (Order) o;
+    return orderId == order.orderId &&
+            userId == order.userId &&
+            Objects.equal(executionDate, order.executionDate) &&
+            orderType == order.orderType &&
+            Objects.equal(executionPrice, order.executionPrice) &&
+            Objects.equal(symbol, order.symbol);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(orderId, executionDate, orderType, executionPrice, symbol, userId);
   }
 
   @Override

@@ -2,8 +2,10 @@ package tutorial.actor;
 
 import akka.actor.ActorPath;
 import akka.actor.ActorRef;
+import akka.actor.Props;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import akka.japi.Creator;
 import akka.japi.Function;
 import akka.persistence.UntypedPersistentActorWithAtLeastOnceDelivery;
 import org.springframework.context.annotation.Scope;
@@ -29,6 +31,17 @@ public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDe
           @Named("OrderIdGenerator") ActorRef orderIdGenerator, @Named("PersistenceActor") ActorPath persistenceRouter) {
     this.orderIdGenerator = orderIdGenerator;
     this.persistenceRouter = persistenceRouter;
+  }
+
+  public static Props props(final ActorRef orderIdGenerator, final ActorPath persistenceRouter) {
+    return Props.create(new Creator<OrderProcessorActor>() {
+      private static final long serialVersionUID = 1L;
+
+      @Override
+      public OrderProcessorActor create() throws Exception {
+        return new OrderProcessorActor(orderIdGenerator, persistenceRouter);
+      }
+    });
   }
 
   @Override
@@ -57,7 +70,7 @@ public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDe
     updateState(msg);
   }
 
-  void updateState(Object event) {
+  private void updateState(Object event) {
     if (event instanceof Order) {
       final Order order = (Order) event;
       deliver(persistenceRouter, (Function<Long, Object>) deliveryId -> new PreparedOrder(deliveryId, order));
