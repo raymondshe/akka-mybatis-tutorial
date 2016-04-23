@@ -45,9 +45,9 @@ public class App {
 
   private static void waitForPersistence(ConfigurableApplicationContext context) throws InterruptedException {
     OrderDao orderDao = context.getBean(OrderDao.class);
-
     int step = 5_000;
     int delay = step;
+
     while (true) {
       Thread.sleep(delay);
 

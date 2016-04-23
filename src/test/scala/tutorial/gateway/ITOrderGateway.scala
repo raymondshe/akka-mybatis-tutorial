@@ -11,27 +11,20 @@ import tutorial.Config
 import tutorial.dal.OrderDao
 import tutorial.spring.SpringExtension._
 
-class OrderGatewayIT extends TestKitBase with FlatSpecLike with ImplicitSender with BeforeAndAfterAll with MockFactory {
+class ITOrderGateway extends TestKitBase with FlatSpecLike with ImplicitSender with BeforeAndAfterAll with MockFactory {
   lazy val ctx: AnnotationConfigApplicationContext = new AnnotationConfigApplicationContext() {
     register(classOf[TestConfig])
     refresh()
   }
   implicit lazy val system = ctx.getBean(classOf[ActorSystem])
-  val orderDao = ctx.getBean(classOf[OrderDao])
 
   override def afterAll = TestKit.shutdownActorSystem(system)
 
   behavior of "OrderGateway"
 
   it should "persist order with generated order id" in {
-    /* TODO:
-    2) Verify OrderProcessor is triggered with default order Id
-    3) Verify OrderIdGenerator is triggered
-    4) Verify OrderProcessor received order with order id generated
-    5) Verify PersistenceActor is triggered
-    6) Verify Dao is triggered with Prepared order.
-     */
     //given
+    val orderDao = ctx.getBean(classOf[OrderDao])
     val orderGateway = ctx.getBean(classOf[OrderGateway])
     //when
     orderDao.saveOrder _ expects * atLeastOnce()
@@ -51,6 +44,6 @@ class TestConfig extends FlatSpecLike with MockFactory {
   def orderDao: OrderDao = mock[OrderDao]
 
   @Bean
-  @Named("OrderProcessorActor")
-  def orderProcessor = system.actorOf(SpringExtProvider.get(system).props("OrderProcessorActor"), "orderProcessor")
+  @Named("OrderProcessor")
+  def orderProcessor = system.actorOf(SpringExtProvider.get(system).props("OrderProcessor"), "orderProcessor")
 }

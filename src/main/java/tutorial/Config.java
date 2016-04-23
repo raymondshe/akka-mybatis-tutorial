@@ -68,9 +68,9 @@ public class Config {
   }
 
   @Bean
-  @Named("OrderProcessorActor")
+  @Named("OrderProcessor")
   public ActorRef orderProcessor() {
-    return actorSystem().actorOf(SpringExtProvider.get(actorSystem()).props("OrderProcessorActor"), "orderProcessor");
+    return actorSystem().actorOf(SpringExtProvider.get(actorSystem()).props("OrderProcessor"), "orderProcessor");
   }
 
   @Bean
@@ -80,10 +80,10 @@ public class Config {
   }
 
   @Bean
-  @Named("PersistenceActor")
+  @Named("Persistence")
   public ActorPath persistence() {
     return actorSystem().actorOf(
-            new RoundRobinPool(PERSISTENCE_ROUTEE_COUNT).props(SpringExtProvider.get(actorSystem()).props("PersistenceActor")),
+            new RoundRobinPool(PERSISTENCE_ROUTEE_COUNT).props(SpringExtProvider.get(actorSystem()).props("Persistence")),
             "persistenceRouter"
     ).path();
   }

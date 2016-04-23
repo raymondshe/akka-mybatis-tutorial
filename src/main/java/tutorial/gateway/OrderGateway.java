@@ -11,7 +11,7 @@ import javax.inject.Named;
 @Service
 public class OrderGateway {
   @Inject
-  @Named("OrderProcessorActor")
+  @Named("OrderProcessor")
   private ActorRef orderProcessor;
 
   public Order placeOrder() {

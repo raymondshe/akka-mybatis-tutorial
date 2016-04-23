@@ -18,7 +18,7 @@ import tutorial.om.message.SequenceOrder;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-@Named("OrderProcessorActor")
+@Named("OrderProcessor")
 @Scope("prototype")
 public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDelivery {
   private LoggingAdapter log = Logging.getLogger(getContext().system(), this);
@@ -28,7 +28,8 @@ public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDe
 
   @Inject
   public OrderProcessorActor(
-          @Named("OrderIdGenerator") ActorRef orderIdGenerator, @Named("PersistenceActor") ActorPath persistenceRouter) {
+          final @Named("OrderIdGenerator") ActorRef orderIdGenerator,
+          final @Named("Persistence") ActorPath persistenceRouter) {
     this.orderIdGenerator = orderIdGenerator;
     this.persistenceRouter = persistenceRouter;
   }
@@ -83,6 +84,6 @@ public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDe
 
   @Override
   public String persistenceId() {
-    return "order-processor-persistence";
+    return "persistenceId";
   }
 }

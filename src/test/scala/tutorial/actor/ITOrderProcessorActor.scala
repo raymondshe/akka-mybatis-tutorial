@@ -8,14 +8,15 @@ import tutorial.om.message.{NewOrder, PreparedOrder, SequenceOrder}
 
 import scala.language.postfixOps
 
-class OrderProcessorActorTest extends TestKit(ActorSystem("MySpec")) with FlatSpecLike with ImplicitSender
+class ITOrderProcessorActor extends TestKit(ActorSystem("AkkaJavaSpring")) with FlatSpecLike with ImplicitSender
   with BeforeAndAfterAll with Matchers {
 
   it should "generate id and persist incoming order" in {
     //given
     val orderIdGenerator = TestProbe()
     val persistence = TestProbe()
-    val orderProcessor = system.actorOf(Props(new OrderProcessorActor(orderIdGenerator.ref, persistence.ref.path)))
+    val orderProcessor = system.actorOf(Props(classOf[OrderProcessorActor], orderIdGenerator.ref, persistence.ref.path),
+      "orderProcessor")
     val order = generateRandomOrder
     //when
     orderProcessor ! new NewOrder(order)

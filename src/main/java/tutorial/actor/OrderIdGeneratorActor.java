@@ -9,7 +9,7 @@ import javax.inject.Named;
 
 @Named("OrderIdGenerator")
 @Scope("prototype")
-public class OrderIdGenerator extends UntypedActor {
+public class OrderIdGeneratorActor extends UntypedActor {
   private long seqNo;
 
   @Override
