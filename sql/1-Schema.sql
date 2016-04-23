@@ -6,5 +6,6 @@ CREATE TABLE somedb.OrderLog (
        orderType VARCHAR(30) NOT NULL,
        executionPrice DECIMAL(5, 2),
        symbol VARCHAR(10),
-       userId INT
+       userId INT,
+       complete_batch_date DATE
 );

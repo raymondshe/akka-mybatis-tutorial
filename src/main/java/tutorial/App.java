@@ -21,14 +21,16 @@ public class App {
   public static void main(String[] args) throws InterruptedException {
     SpringApplication app = new SpringApplication(App.class);
     app.setWebEnvironment(false);
-    Optional<ConfigurableApplicationContext> context = Optional.empty();
+    Optional<ConfigurableApplicationContext> contextOpt = Optional.empty();
 
     try {
-      context = Optional.ofNullable(app.run(args));
-      generateRequests(context.orElseThrow(() -> new RuntimeException("Spring context is unavailable")));
-      waitForPersistence(context.get());
+      contextOpt = Optional.ofNullable(app.run(args));
+      ConfigurableApplicationContext context = contextOpt.orElseThrow(() -> new RuntimeException("Spring context is unavailable"));
+      generateRequests(context);
+      waitForPersistence(context);
+      setBatchCompletionTime(context);
     } finally {
-      context.map(c -> c.getBean(ActorSystem.class)).ifPresent(ActorSystem::shutdown);
+      contextOpt.map(c -> c.getBean(ActorSystem.class)).ifPresent(ActorSystem::shutdown);
     }
   }
 
@@ -57,5 +59,11 @@ public class App {
 
     System.out.println("Orders in db: ");
     orderDao.getOrders().forEach(System.out::println);
+  }
+
+  private static void setBatchCompletionTime(ConfigurableApplicationContext context) throws InterruptedException {
+    OrderGateway orderGateway = context.getBean(OrderGateway.class);
+    orderGateway.completeBatch();
+    Thread.sleep(5_000);
   }
 }

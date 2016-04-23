@@ -3,6 +3,7 @@ package tutorial.gateway;
 import akka.actor.ActorRef;
 import org.springframework.stereotype.Service;
 import tutorial.om.Order;
+import tutorial.om.message.CompleteBatch;
 import tutorial.om.message.NewOrder;
 
 import javax.inject.Inject;
@@ -18,5 +19,9 @@ public class OrderGateway {
     Order order = OrderUtil.generateRandomOrder();
     orderProcessor.tell(new NewOrder(order), ActorRef.noSender());
     return order;
+  }
+
+  public void completeBatch() {
+    orderProcessor.tell(new CompleteBatch(), ActorRef.noSender());
   }
 }

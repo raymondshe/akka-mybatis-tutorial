@@ -7,6 +7,8 @@ import akka.event.LoggingAdapter;
 import akka.japi.Creator;
 import org.springframework.context.annotation.Scope;
 import tutorial.dal.OrderDao;
+import tutorial.om.message.BatchCompleted;
+import tutorial.om.message.CompleteBatchForId;
 import tutorial.om.message.PersistedOrder;
 import tutorial.om.message.PreparedOrder;
 
@@ -39,16 +41,20 @@ public class PersistenceActor extends UntypedActor {
   }
 
   @Override
-  public void onReceive(Object message) throws Exception {
-    //randomFail(message);
+  public void onReceive(Object msg) throws Exception {
+    //randomFail(msg);
 
-    if (message instanceof PreparedOrder) {
-      PreparedOrder preparedOrder = (PreparedOrder) message;
+    if (msg instanceof PreparedOrder) {
+      PreparedOrder preparedOrder = (PreparedOrder) msg;
       log.info("Order to be persisted: {}", preparedOrder);
       orderDao.saveOrder(preparedOrder.order);
-      getSender().tell(new PersistedOrder(preparedOrder.order, preparedOrder.deliveryId), getSelf());
+      getSender().tell(new PersistedOrder(preparedOrder.order, preparedOrder.deliveryId), self());
+    } else if (msg instanceof CompleteBatchForId) {
+      CompleteBatchForId batchForId = (CompleteBatchForId) msg;
+      orderDao.completeBatch(batchForId.id);
+      getSender().tell(new BatchCompleted(batchForId.id), self());
     } else {
-      unhandled(message);
+      unhandled(msg);
     }
   }
 

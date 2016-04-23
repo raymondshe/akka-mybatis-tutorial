@@ -1,9 +1,11 @@
 package tutorial.actor;
 
 import akka.actor.UntypedActor;
-import tutorial.om.Order;
-import tutorial.om.message.SequenceOrder;
 import org.springframework.context.annotation.Scope;
+import tutorial.om.Order;
+import tutorial.om.message.CurrentOrderId;
+import tutorial.om.message.GetCurrentOrderId;
+import tutorial.om.message.SequenceOrder;
 
 import javax.inject.Named;
 
@@ -18,6 +20,10 @@ public class OrderIdGeneratorActor extends UntypedActor {
       Order order = (Order) message;
       order.setOrderId(nextSeqNo());
       getSender().tell(new SequenceOrder(order), getSelf());
+
+    } else if (message instanceof GetCurrentOrderId) {
+      getSender().tell(new CurrentOrderId(seqNo), getSelf());
+
     } else {
       unhandled(message);
     }
