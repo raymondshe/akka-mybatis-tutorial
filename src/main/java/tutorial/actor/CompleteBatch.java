@@ -1,4 +1,4 @@
-package tutorial.om.message;
+package tutorial.actor;
 
 public class CompleteBatch {
 }

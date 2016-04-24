@@ -2,9 +2,9 @@ package tutorial.gateway;
 
 import akka.actor.ActorRef;
 import org.springframework.stereotype.Service;
+import tutorial.actor.CompleteBatch;
+import tutorial.actor.NewOrder;
 import tutorial.om.Order;
-import tutorial.om.message.CompleteBatch;
-import tutorial.om.message.NewOrder;
 
 import javax.inject.Inject;
 import javax.inject.Named;

@@ -1,11 +1,9 @@
 package tutorial.actor;
 
 import akka.actor.UntypedActor;
+import com.google.common.base.MoreObjects;
 import org.springframework.context.annotation.Scope;
 import tutorial.om.Order;
-import tutorial.om.message.CurrentOrderId;
-import tutorial.om.message.GetCurrentOrderId;
-import tutorial.om.message.SequenceOrder;
 
 import javax.inject.Named;
 
@@ -31,5 +29,28 @@ public class OrderIdGeneratorActor extends UntypedActor {
 
   private long nextSeqNo() {
     return ++seqNo;
+  }
+}
+
+class SequenceOrder {
+  public final Order order;
+
+  public SequenceOrder(Order order) {
+    this.order = order;
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+            .add("order", order)
+            .toString();
+  }
+}
+
+class CurrentOrderId {
+  public final long id;
+
+  public CurrentOrderId(long id) {
+    this.id = id;
   }
 }

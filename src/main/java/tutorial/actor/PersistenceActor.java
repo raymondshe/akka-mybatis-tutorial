@@ -5,12 +5,10 @@ import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.Creator;
+import com.google.common.base.MoreObjects;
 import org.springframework.context.annotation.Scope;
 import tutorial.dal.OrderDao;
-import tutorial.om.message.BatchCompleted;
-import tutorial.om.message.CompleteBatchForId;
-import tutorial.om.message.PersistedOrder;
-import tutorial.om.message.PreparedOrder;
+import tutorial.om.Order;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -63,5 +61,31 @@ public class PersistenceActor extends UntypedActor {
     random.ints(1).forEach(i -> {
       if (i % 2 == 0) throw new RuntimeException("random fail on message: " + msg);
     });
+  }
+}
+
+class BatchCompleted {
+  public final long id;
+
+  public BatchCompleted(long id) {
+    this.id = id;
+  }
+}
+
+class PersistedOrder {
+  public final Order order;
+  public final long deliveryId;
+
+  public PersistedOrder(Order order, long deliveryId) {
+    this.order = order;
+    this.deliveryId = deliveryId;
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+            .add("order", order)
+            .add("deliveryId", deliveryId)
+            .toString();
   }
 }

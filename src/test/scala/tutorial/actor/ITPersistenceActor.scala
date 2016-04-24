@@ -6,7 +6,6 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
 import tutorial.dal.OrderDao
 import tutorial.gateway.OrderUtil
-import tutorial.om.message.{PersistedOrder, PreparedOrder}
 
 class ITPersistenceActor extends TestKit(ActorSystem("AkkaJavaSpring")) with FlatSpecLike with ImplicitSender
   with BeforeAndAfterAll with Matchers with MockFactory {

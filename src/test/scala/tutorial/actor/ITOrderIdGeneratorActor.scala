@@ -4,7 +4,6 @@ import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
 import tutorial.gateway.OrderUtil
-import tutorial.om.message.SequenceOrder
 
 class ITOrderIdGeneratorActor extends TestKit(ActorSystem("AkkaJavaSpring")) with FlatSpecLike with ImplicitSender
   with BeforeAndAfterAll with Matchers {

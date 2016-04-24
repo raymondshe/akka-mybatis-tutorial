@@ -4,7 +4,6 @@ import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
 import tutorial.gateway.OrderUtil._
-import tutorial.om.message.{NewOrder, PreparedOrder, SequenceOrder}
 
 import scala.language.postfixOps
 

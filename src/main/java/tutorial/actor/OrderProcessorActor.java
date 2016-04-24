@@ -12,21 +12,12 @@ import akka.japi.Function;
 import akka.pattern.Patterns;
 import akka.persistence.UntypedPersistentActorWithAtLeastOnceDelivery;
 import akka.util.Timeout;
+import com.google.common.base.MoreObjects;
 import org.springframework.context.annotation.Scope;
 import scala.concurrent.ExecutionContextExecutor;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 import tutorial.om.Order;
-import tutorial.om.message.BatchCompleted;
-import tutorial.om.message.CompleteBatch;
-import tutorial.om.message.CompleteBatchFailed;
-import tutorial.om.message.CompleteBatchForId;
-import tutorial.om.message.CurrentOrderId;
-import tutorial.om.message.GetCurrentOrderId;
-import tutorial.om.message.NewOrder;
-import tutorial.om.message.PersistedOrder;
-import tutorial.om.message.PreparedOrder;
-import tutorial.om.message.SequenceOrder;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -119,5 +110,37 @@ public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDe
   @Override
   public String persistenceId() {
     return "persistenceId";
+  }
+}
+
+class CompleteBatchFailed {
+}
+
+class CompleteBatchForId {
+  public final long id;
+
+  public CompleteBatchForId(long id) {
+    this.id = id;
+  }
+}
+
+class GetCurrentOrderId {
+}
+
+class PreparedOrder {
+  public final Long deliveryId;
+  public final Order order;
+
+  public PreparedOrder(Long deliveryId, Order order) {
+    this.deliveryId = deliveryId;
+    this.order = order;
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+            .add("deliveryId", deliveryId)
+            .add("order", order)
+            .toString();
   }
 }
