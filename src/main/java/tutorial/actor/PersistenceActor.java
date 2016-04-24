@@ -42,17 +42,18 @@ public class PersistenceActor extends UntypedActor {
 
   @Override
   public void onReceive(Object msg) throws Exception {
-    //randomFail(msg);
-
     if (msg instanceof PreparedOrder) {
+      randomFail(msg);
       PreparedOrder preparedOrder = (PreparedOrder) msg;
       log.info("Order to be persisted: {}", preparedOrder);
       orderDao.saveOrder(preparedOrder.order);
       getSender().tell(new PersistedOrder(preparedOrder.order, preparedOrder.deliveryId), self());
+
     } else if (msg instanceof CompleteBatchForId) {
       CompleteBatchForId batchForId = (CompleteBatchForId) msg;
       orderDao.completeBatch(batchForId.id);
       getSender().tell(new BatchCompleted(batchForId.id), self());
+
     } else {
       unhandled(msg);
     }
@@ -60,7 +61,7 @@ public class PersistenceActor extends UntypedActor {
 
   private void randomFail(Object msg) {
     random.ints(1).forEach(i -> {
-      if (i % 2 == 0) throw new RuntimeException("random fail: error happened: " + msg);
+      if (i % 2 == 0) throw new RuntimeException("random fail on message: " + msg);
     });
   }
 }

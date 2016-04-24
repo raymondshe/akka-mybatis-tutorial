@@ -3,6 +3,7 @@ package tutorial.actor;
 import akka.actor.ActorPath;
 import akka.actor.ActorRef;
 import akka.actor.Props;
+import akka.dispatch.OnFailure;
 import akka.dispatch.OnSuccess;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
@@ -18,6 +19,7 @@ import scala.concurrent.duration.Duration;
 import tutorial.om.Order;
 import tutorial.om.message.BatchCompleted;
 import tutorial.om.message.CompleteBatch;
+import tutorial.om.message.CompleteBatchFailed;
 import tutorial.om.message.CompleteBatchForId;
 import tutorial.om.message.CurrentOrderId;
 import tutorial.om.message.GetCurrentOrderId;
@@ -83,6 +85,13 @@ public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDe
           getContext().actorSelection(persistenceRouter).tell(new CompleteBatchForId(id), self());
         }
       }, ec);
+      f.onFailure(new OnFailure() {
+        @Override
+        public void onFailure(Throwable failure) throws Throwable {
+          getSender().tell(new CompleteBatchFailed(), self());
+        }
+      }, ec);
+
     } else if (msg instanceof BatchCompleted) {
       log.info("Batch has been completed. Id = '{}'", ((BatchCompleted) msg).id);
     } else {
@@ -92,6 +101,7 @@ public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDe
 
   @Override
   public void onReceiveRecover(Object msg) throws Exception {
+    log.info("recover message from journal: {}", msg);
     updateState(msg);
   }
 

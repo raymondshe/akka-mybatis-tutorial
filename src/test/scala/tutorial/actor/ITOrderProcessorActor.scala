@@ -31,6 +31,8 @@ class ITOrderProcessorActor extends TestKit(ActorSystem("AkkaJavaSpring")) with 
     //then
     val preparedOrder = persistence.expectMsgAnyClassOf(classOf[PreparedOrder])
     preparedOrder.order.getOrderId should be(1)
+
+    //TODO: test CompleteBatch command
   }
 
   override def afterAll = TestKit.shutdownActorSystem(system)

@@ -19,10 +19,10 @@ public class OrderIdGeneratorActor extends UntypedActor {
     if (message instanceof Order) {
       Order order = (Order) message;
       order.setOrderId(nextSeqNo());
-      getSender().tell(new SequenceOrder(order), getSelf());
+      getSender().tell(new SequenceOrder(order), self());
 
     } else if (message instanceof GetCurrentOrderId) {
-      getSender().tell(new CurrentOrderId(seqNo), getSelf());
+      getSender().tell(new CurrentOrderId(seqNo), self());
 
     } else {
       unhandled(message);
