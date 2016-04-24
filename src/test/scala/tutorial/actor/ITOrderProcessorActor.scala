@@ -6,6 +6,7 @@ import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
 import tutorial.gateway.OrderUtil._
 
 import scala.language.postfixOps
+import scala.util.Random
 
 class ITOrderProcessorActor extends TestKit(ActorSystem("AkkaJavaSpring")) with FlatSpecLike with ImplicitSender
   with BeforeAndAfterAll with Matchers {
@@ -14,8 +15,7 @@ class ITOrderProcessorActor extends TestKit(ActorSystem("AkkaJavaSpring")) with 
     //given
     val orderIdGenerator = TestProbe()
     val persistence = TestProbe()
-    val orderProcessor = system.actorOf(Props(classOf[OrderProcessorActor], orderIdGenerator.ref, persistence.ref.path),
-      "orderProcessor")
+    val orderProcessor = orderProcessorActor(orderIdGenerator, persistence)
     val order = generateRandomOrder
     //when
     orderProcessor ! new NewOrder(order)
@@ -30,9 +30,28 @@ class ITOrderProcessorActor extends TestKit(ActorSystem("AkkaJavaSpring")) with 
     //then
     val preparedOrder = persistence.expectMsgAnyClassOf(classOf[PreparedOrder])
     preparedOrder.order.getOrderId should be(1)
-
-    //TODO: test CompleteBatch command
   }
+
+  it should "complete batch" in {
+    //given
+    val orderIdGenerator = TestProbe()
+    val persistence = TestProbe()
+    val orderProcessor = orderProcessorActor(orderIdGenerator, persistence)
+    //when
+    orderProcessor ! new CompleteBatch
+    //then
+    orderIdGenerator.expectMsgAnyClassOf(classOf[GetCurrentOrderId])
+
+    //when
+    orderIdGenerator.reply(new CurrentOrderId(10))
+    //then
+    val completeBatchForId = persistence.expectMsgAnyClassOf(classOf[CompleteBatchForId])
+    completeBatchForId.id should be(10)
+  }
+
+  def orderProcessorActor(orderIdGenerator: TestProbe, persistence: TestProbe) =
+    system.actorOf(Props(classOf[OrderProcessorActor], orderIdGenerator.ref, persistence.ref.path, false),
+      "orderProcessor" + Random.nextInt)
 
   override def afterAll = TestKit.shutdownActorSystem(system)
 }

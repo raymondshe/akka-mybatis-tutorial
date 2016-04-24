@@ -11,8 +11,7 @@ public class SpringActorProducer implements IndirectActorProducer {
   private final ApplicationContext applicationContext;
   private final String actorBeanName;
 
-  public SpringActorProducer(ApplicationContext applicationContext,
-                             String actorBeanName) {
+  public SpringActorProducer(ApplicationContext applicationContext, String actorBeanName) {
     this.applicationContext = applicationContext;
     this.actorBeanName = actorBeanName;
   }

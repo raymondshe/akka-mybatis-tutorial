@@ -20,20 +20,22 @@ public class PersistenceActor extends UntypedActor {
   private LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
   private OrderDao orderDao;
+  private boolean randomFail;
   private Random random = new Random();
 
   @Inject
-  public PersistenceActor(OrderDao orderDao) {
+  public PersistenceActor(OrderDao orderDao, @Named("PersistenceRandomFail") boolean randomFail) {
     this.orderDao = orderDao;
+    this.randomFail = randomFail;
   }
 
-  public static Props props(final OrderDao orderDao) {
+  public static Props props(final OrderDao orderDao, boolean randomFail) {
     return Props.create(new Creator<PersistenceActor>() {
       private static final long serialVersionUID = 1L;
 
       @Override
       public PersistenceActor create() throws Exception {
-        return new PersistenceActor(orderDao);
+        return new PersistenceActor(orderDao, randomFail);
       }
     });
   }
@@ -58,6 +60,8 @@ public class PersistenceActor extends UntypedActor {
   }
 
   private void randomFail(Object msg) {
+    if (!randomFail) return;
+
     random.ints(1).forEach(i -> {
       if (i % 2 == 0) throw new RuntimeException("random fail on message: " + msg);
     });

@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+//class should be immutable in production
 final public class Order implements Serializable {
   private long orderId = -1;
   private LocalDateTime executionDate;

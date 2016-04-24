@@ -25,7 +25,8 @@ import javax.inject.Named;
 @Named("OrderProcessor")
 @Scope("prototype")
 public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDelivery {
-  public static final Timeout _5_SECONDS = new Timeout(Duration.create(5, "seconds"));
+  private static final Timeout _5_SECONDS = new Timeout(Duration.create(5, "seconds"));
+  private boolean recovery;
   private LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
   private ActorRef orderIdGenerator;
@@ -34,18 +35,20 @@ public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDe
   @Inject
   public OrderProcessorActor(
           final @Named("OrderIdGenerator") ActorRef orderIdGenerator,
-          final @Named("Persistence") ActorPath persistenceRouter) {
+          final @Named("Persistence") ActorPath persistenceRouter,
+          final @Named("Recovery") boolean recovery) {
     this.orderIdGenerator = orderIdGenerator;
     this.persistenceRouter = persistenceRouter;
+    this.recovery = recovery;
   }
 
-  public static Props props(final ActorRef orderIdGenerator, final ActorPath persistenceRouter) {
+  public static Props props(final ActorRef orderIdGenerator, final ActorPath persistenceRouter, boolean recovery) {
     return Props.create(new Creator<OrderProcessorActor>() {
       private static final long serialVersionUID = 1L;
 
       @Override
       public OrderProcessorActor create() throws Exception {
-        return new OrderProcessorActor(orderIdGenerator, persistenceRouter);
+        return new OrderProcessorActor(orderIdGenerator, persistenceRouter, recovery);
       }
     });
   }
@@ -92,7 +95,9 @@ public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDe
 
   @Override
   public void onReceiveRecover(Object msg) throws Exception {
-    log.info("recover message from journal: {}", msg);
+    if (!recovery) return;
+
+    log.info("recover journal message: {}", msg);
     updateState(msg);
   }
 

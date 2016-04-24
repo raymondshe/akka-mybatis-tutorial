@@ -68,6 +68,12 @@ public class Config {
   }
 
   @Bean
+  @Named("Recovery")
+  public boolean recovery() {
+    return true;
+  }
+
+  @Bean
   @Named("OrderProcessor")
   public ActorRef orderProcessor() {
     return actorSystem().actorOf(SpringExtProvider.get(actorSystem()).props("OrderProcessor"), "orderProcessor");
@@ -77,6 +83,12 @@ public class Config {
   @Named("OrderIdGenerator")
   public ActorRef orderIdGenerator() {
     return actorSystem().actorOf(SpringExtProvider.get(actorSystem()).props("OrderIdGenerator"), "orderIdGenerator");
+  }
+
+  @Bean
+  @Named("PersistenceRandomFail")
+  public boolean randomFail() {
+    return false;
   }
 
   @Bean
