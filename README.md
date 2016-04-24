@@ -8,4 +8,4 @@ Tutorial application for Akka-actor, persistence and Mybatis
 5. Spring as ActorRef dependency injector
 
 
-Tools required: java8, mysql database, maven
+Tools required: java8, scala, mysql database, maven
