@@ -70,7 +70,7 @@ public class Config {
   @Bean
   @Named("Recovery")
   public boolean recovery() {
-    return true;
+    return false;
   }
 
   @Bean
@@ -83,6 +83,12 @@ public class Config {
   @Named("OrderIdGenerator")
   public ActorRef orderIdGenerator() {
     return actorSystem().actorOf(SpringExtProvider.get(actorSystem()).props("OrderIdGenerator"), "orderIdGenerator");
+  }
+
+  @Bean
+  @Named("Execution")
+  public ActorRef execution() {
+    return actorSystem().actorOf(SpringExtProvider.get(actorSystem()).props("Execution"), "execution");
   }
 
   @Bean

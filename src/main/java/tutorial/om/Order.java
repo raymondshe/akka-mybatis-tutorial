@@ -6,8 +6,9 @@ import com.google.common.base.Objects;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
-//class should be immutable in production
+//actually, class should be immutable in production
 final public class Order implements Serializable {
   private long orderId = -1;
   private LocalDateTime executionDate;
@@ -15,6 +16,8 @@ final public class Order implements Serializable {
   private BigDecimal executionPrice;
   private String symbol;
   private int userId;
+  private int quantity;
+  private List<Execution> executions;
 
   public long getOrderId() {
     return orderId;
@@ -64,6 +67,14 @@ final public class Order implements Serializable {
     this.userId = userId;
   }
 
+  public int getQuantity() {
+    return quantity;
+  }
+
+  public void setQuantity(int quantity) {
+    this.quantity = quantity;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -84,13 +95,22 @@ final public class Order implements Serializable {
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this).omitNullValues()
+    return MoreObjects.toStringHelper(this)
             .add("orderId", orderId)
             .add("executionDate", executionDate)
             .add("orderType", orderType)
             .add("executionPrice", executionPrice)
             .add("symbol", symbol)
             .add("userId", userId)
+            .add("quantity", quantity)
             .toString();
+  }
+
+  public List<Execution> getExecutions() {
+    return executions;
+  }
+
+  public void setExecutions(List<Execution> executions) {
+    this.executions = executions;
   }
 }

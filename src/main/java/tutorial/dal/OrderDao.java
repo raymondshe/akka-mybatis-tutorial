@@ -27,4 +27,9 @@ public class OrderDao {
     Map<String, Object> params = ImmutableMap.of("id", id, "date", new Date());
     sqlSession.update("tutorial.dal.OrderDao.completeBatch", params);
   }
+
+  public void insertExecution(long orderId, int quantity) {
+    Map<String, Object> params = ImmutableMap.of("orderId", orderId, "quantity", quantity, "date", new Date());
+    sqlSession.insert("tutorial.dal.OrderDao.insertExecution", params);
+  }
 }

@@ -10,7 +10,26 @@
         )
     </insert>
 
-    <select id="getOrders" resultType="tutorial.om.Order">
+    <resultMap id="orders" type="tutorial.om.Order">
+        <id column="orderId" property="orderId"/>
+        <result column="orderType" property="orderType"/>
+        <!--<result column="executionDate" property="executionDate"/>-->
+        <result column="executionPrice" property="executionPrice"/>
+        <result column="symbol" property="symbol"/>
+        <result column="userId" property="userId"/>
+        <result column="quantity" property="quantity"/>
+        <collection property="executions" javaType="ArrayList" resultMap="executions" ofType="tutorial.om.Execution"
+                    column="executionId"/>
+    </resultMap>
+
+    <resultMap id="executions" type="tutorial.om.Execution">
+        <id column="executionId" property="executionId"/>
+        <result column="orderId" property="orderId"/>
+        <!--<result column="executionDate" property="executionDate" javaType="java.util.Date" jdbcType="TIMESTAMP" typeHandler="SqlTimestampTypeHandler"/>-->
+        <result column="quantity" property="quantity"/>
+    </resultMap>
+
+    <select id="getOrders" resultMap="orders">
         SELECT *
         FROM OrderLog;
     </select>
@@ -22,4 +41,11 @@
         WHERE orderid <= #{id}
         ]]>
     </update>
+
+    <insert id="insertExecution">
+        INSERT INTO OrderExecution (orderId, executionDate, quantity)
+        VALUES (
+          #{orderId}, #{executionDate}, #{quantity}
+        )
+    </insert>
 </mapper>

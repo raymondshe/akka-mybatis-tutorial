@@ -31,24 +31,28 @@ public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDe
 
   private ActorRef orderIdGenerator;
   private ActorPath persistenceRouter;
+  private ActorRef orderExecution;
 
   @Inject
   public OrderProcessorActor(
           final @Named("OrderIdGenerator") ActorRef orderIdGenerator,
           final @Named("Persistence") ActorPath persistenceRouter,
+          final @Named("Execution") ActorRef orderExecution,
           final @Named("Recovery") boolean recovery) {
     this.orderIdGenerator = orderIdGenerator;
     this.persistenceRouter = persistenceRouter;
+    this.orderExecution = orderExecution;
     this.recovery = recovery;
   }
 
-  public static Props props(final ActorRef orderIdGenerator, final ActorPath persistenceRouter, boolean recovery) {
+  public static Props props(final ActorRef orderIdGenerator, final ActorPath persistenceRouter,
+                            final ActorRef orderExecution, boolean recovery) {
     return Props.create(new Creator<OrderProcessorActor>() {
       private static final long serialVersionUID = 1L;
 
       @Override
       public OrderProcessorActor create() throws Exception {
-        return new OrderProcessorActor(orderIdGenerator, persistenceRouter, recovery);
+        return new OrderProcessorActor(orderIdGenerator, persistenceRouter, orderExecution, recovery);
       }
     });
   }
@@ -67,30 +71,37 @@ public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDe
 
     } else if (msg instanceof PersistedOrder) {
       updateState(msg);
-      log.info("Order with id = '{}' has been successfully persisted.", ((PersistedOrder) msg).order.getOrderId());
+      Order order = ((PersistedOrder) msg).order;
+      log.info("Order with id = '{}' has been successfully persisted.", order.getOrderId());
+      orderExecution.tell(new ExecuteOrder(order.getOrderId(), order.getQuantity()), getSelf());
 
     } else if (msg instanceof CompleteBatch) {
-      Future<Object> f = Patterns.ask(orderIdGenerator, new GetCurrentOrderId(), _5_SECONDS);
-
-      ExecutionContextExecutor ec = getContext().system().dispatcher();
-      f.onSuccess(new OnSuccess<Object>() {
-        public void onSuccess(Object result) {
-          long id = ((CurrentOrderId) result).id;
-          getContext().actorSelection(persistenceRouter).tell(new CompleteBatchForId(id), self());
-        }
-      }, ec);
-      f.onFailure(new OnFailure() {
-        @Override
-        public void onFailure(Throwable failure) throws Throwable {
-          getSender().tell(new CompleteBatchFailed(), self());
-        }
-      }, ec);
+      completeBatch();
 
     } else if (msg instanceof BatchCompleted) {
       log.info("Batch has been completed. Id = '{}'", ((BatchCompleted) msg).id);
     } else {
       unhandled(msg);
     }
+  }
+
+  private void completeBatch() {
+    Future<Object> f = Patterns.ask(orderIdGenerator, new GetCurrentOrderId(), _5_SECONDS);
+    ExecutionContextExecutor ec = getContext().system().dispatcher();
+
+    f.onSuccess(new OnSuccess<Object>() {
+      public void onSuccess(Object result) {
+        long id = ((CurrentOrderId) result).id;
+        getContext().actorSelection(persistenceRouter).tell(new CompleteBatchForId(id), self());
+      }
+    }, ec);
+
+    f.onFailure(new OnFailure() {
+      @Override
+      public void onFailure(Throwable failure) throws Throwable {
+        getSender().tell(new CompleteBatchFailed(), self());
+      }
+    }, ec);
   }
 
   @Override

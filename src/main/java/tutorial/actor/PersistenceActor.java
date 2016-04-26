@@ -54,6 +54,9 @@ public class PersistenceActor extends UntypedActor {
       orderDao.completeBatch(batchForId.id);
       getSender().tell(new BatchCompleted(batchForId.id), self());
 
+    } else if (msg instanceof ExecutedQuantity ) {
+      ExecutedQuantity executedQuantity = (ExecutedQuantity) msg;
+      orderDao.insertExecution(executedQuantity.orderId, executedQuantity.quantity);
     } else {
       unhandled(msg);
     }
