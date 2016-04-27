@@ -47,6 +47,7 @@ public class ExecutionActor extends UntypedActor {
       //it has to be some gateway call to execute the quantity and only then persist
       ExecuteOrder executeOrder = (ExecuteOrder) msg;
       List<Integer> quantities = distributeQuantity(executeOrder.quantity);
+
       quantities
               .parallelStream()
               .forEach(q -> getContext().actorSelection(persistence)

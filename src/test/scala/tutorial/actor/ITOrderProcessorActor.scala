@@ -33,6 +33,19 @@ class ITOrderProcessorActor extends TestKit(ActorSystem("AkkaJavaSpring")) with 
     preparedOrder.order.getOrderId should be(1)
   }
 
+  it should "execute order" in {
+    //given
+    val execution = TestProbe()
+    val orderProcessor = orderProcessorActor(TestProbe(), TestProbe(), execution)
+    val order = generateRandomOrder
+    //when
+    orderProcessor ! new PersistedOrder(order, 1)
+    //then
+    val executeOrder = execution.expectMsgAnyClassOf(classOf[ExecuteOrder])
+    executeOrder.orderId should be (order.getOrderId)
+    executeOrder.quantity should be (order.getQuantity)
+  }
+
   it should "complete batch" in {
     //given
     val orderIdGenerator = TestProbe()
