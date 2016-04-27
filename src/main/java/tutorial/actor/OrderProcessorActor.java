@@ -73,7 +73,7 @@ public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDe
       updateState(msg);
       Order order = ((PersistedOrder) msg).order;
       log.info("Order with id = '{}' has been successfully persisted.", order.getOrderId());
-      orderExecution.tell(new ExecuteOrder(order.getOrderId(), order.getQuantity()), getSelf());
+      orderExecution.tell(new ExecuteOrder(order.getOrderId(), order.getQuantity()), self());
 
     } else if (msg instanceof CompleteBatch) {
       completeBatch();

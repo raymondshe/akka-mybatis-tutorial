@@ -1,9 +1,11 @@
 package tutorial.actor;
 
-import akka.actor.ActorRef;
+import akka.actor.ActorPath;
+import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import akka.japi.Creator;
 import com.google.common.base.MoreObjects;
 import org.springframework.context.annotation.Scope;
 
@@ -18,12 +20,23 @@ import java.util.Random;
 public class ExecutionActor extends UntypedActor {
   private LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
-  private ActorRef persistence;
+  private ActorPath persistence;
   private Random random = new Random();
 
   @Inject
-  public ExecutionActor(final @Named("Persistence") ActorRef persistence) {
+  public ExecutionActor(final @Named("Persistence") ActorPath persistence) {
     this.persistence = persistence;
+  }
+
+  public static Props props(final ActorPath persistenceRouter) {
+    return Props.create(new Creator<ExecutionActor>() {
+      private static final long serialVersionUID = 1L;
+
+      @Override
+      public ExecutionActor create() throws Exception {
+        return new ExecutionActor(persistenceRouter);
+      }
+    });
   }
 
   @Override
@@ -35,7 +48,7 @@ public class ExecutionActor extends UntypedActor {
       List<Integer> quantities = distributeQuantities(executeOrder.quantity);
       quantities
               .parallelStream()
-              .forEach(q -> persistence.tell(new ExecutedQuantity(executeOrder.orderId, q), self()));
+              .forEach(q -> getContext().actorSelection(persistence).tell(new ExecutedQuantity(executeOrder.orderId, q), self()));
 
     } else {
       unhandled(msg);
