@@ -18,6 +18,7 @@ public class OrderUtil {
     order.setOrderType(OrderType.values()[random.nextInt(OrderType.values().length)]);
     order.setSymbol(SYMBOLS.get(random.nextInt(SYMBOLS.size())));
     order.setUserId(Math.abs(random.nextInt()));
+    order.setQuantity(Math.abs(random.nextInt(500)));
     return order;
   }
 }

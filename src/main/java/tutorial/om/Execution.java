@@ -1,11 +1,13 @@
 package tutorial.om;
 
-import java.util.Date;
+import com.google.common.base.MoreObjects;
+
+import java.time.LocalDateTime;
 
 public class Execution {
   private long executionId;
   private long orderId;
-  private Date executionDate;
+  private LocalDateTime executionDate;
   private int quantity;
 
   public long getExecutionId() {
@@ -24,11 +26,11 @@ public class Execution {
     this.orderId = orderId;
   }
 
-  public Date getExecutionDate() {
+  public LocalDateTime getExecutionDate() {
     return executionDate;
   }
 
-  public void setExecutionDate(Date executionDate) {
+  public void setExecutionDate(LocalDateTime executionDate) {
     this.executionDate = executionDate;
   }
 
@@ -38,5 +40,15 @@ public class Execution {
 
   public void setQuantity(int quantity) {
     this.quantity = quantity;
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this).omitNullValues()
+            .add("executionId", executionId)
+            .add("orderId", orderId)
+            .add("executionDate", executionDate)
+            .add("quantity", quantity)
+            .toString();
   }
 }

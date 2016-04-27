@@ -15,7 +15,8 @@ class ITOrderProcessorActor extends TestKit(ActorSystem("AkkaJavaSpring")) with 
     //given
     val orderIdGenerator = TestProbe()
     val persistence = TestProbe()
-    val orderProcessor = orderProcessorActor(orderIdGenerator, persistence)
+    val execution = TestProbe()
+    val orderProcessor = orderProcessorActor(orderIdGenerator, persistence, execution)
     val order = generateRandomOrder
     //when
     orderProcessor ! new NewOrder(order)
@@ -36,7 +37,8 @@ class ITOrderProcessorActor extends TestKit(ActorSystem("AkkaJavaSpring")) with 
     //given
     val orderIdGenerator = TestProbe()
     val persistence = TestProbe()
-    val orderProcessor = orderProcessorActor(orderIdGenerator, persistence)
+    val execution = TestProbe()
+    val orderProcessor = orderProcessorActor(orderIdGenerator, persistence, execution)
     //when
     orderProcessor ! new CompleteBatch
     //then
@@ -49,8 +51,8 @@ class ITOrderProcessorActor extends TestKit(ActorSystem("AkkaJavaSpring")) with 
     completeBatchForId.id should be(10)
   }
 
-  def orderProcessorActor(orderIdGenerator: TestProbe, persistence: TestProbe) =
-    system.actorOf(Props(classOf[OrderProcessorActor], orderIdGenerator.ref, persistence.ref.path, false),
+  def orderProcessorActor(orderIdGenerator: TestProbe, persistence: TestProbe, execution: TestProbe) =
+    system.actorOf(Props(classOf[OrderProcessorActor], orderIdGenerator.ref, persistence.ref.path, execution.ref, false),
       "orderProcessor" + Random.nextInt)
 
   override def afterAll = TestKit.shutdownActorSystem(system)

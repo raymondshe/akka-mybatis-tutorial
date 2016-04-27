@@ -12,6 +12,7 @@ import tutorial.om.Order;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.Date;
 import java.util.Random;
 
 @Named("Persistence")
@@ -54,9 +55,11 @@ public class PersistenceActor extends UntypedActor {
       orderDao.completeBatch(batchForId.id);
       getSender().tell(new BatchCompleted(batchForId.id), self());
 
-    } else if (msg instanceof ExecutedQuantity ) {
+    } else if (msg instanceof ExecutedQuantity) {
+      log.info("ExecutedQuantity: {}", msg);
       ExecutedQuantity executedQuantity = (ExecutedQuantity) msg;
-      orderDao.insertExecution(executedQuantity.orderId, executedQuantity.quantity);
+      orderDao.insertExecution(executedQuantity.orderId, executedQuantity.quantity, new Date());
+
     } else {
       unhandled(msg);
     }

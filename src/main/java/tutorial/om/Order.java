@@ -6,10 +6,11 @@ import com.google.common.base.Objects;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-//actually, class should be immutable in production
-final public class Order implements Serializable {
+//actually, this class should be immutable in production
+public final class Order implements Serializable {
   private long orderId = -1;
   private LocalDateTime executionDate;
   private OrderType orderType;
@@ -17,7 +18,7 @@ final public class Order implements Serializable {
   private String symbol;
   private int userId;
   private int quantity;
-  private List<Execution> executions;
+  private List<Execution> executions = new ArrayList<>();
 
   public long getOrderId() {
     return orderId;
@@ -103,6 +104,7 @@ final public class Order implements Serializable {
             .add("symbol", symbol)
             .add("userId", userId)
             .add("quantity", quantity)
+            .add("executions", executions)
             .toString();
   }
 

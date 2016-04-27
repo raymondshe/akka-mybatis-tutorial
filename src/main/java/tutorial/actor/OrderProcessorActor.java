@@ -21,6 +21,7 @@ import tutorial.om.Order;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.time.LocalDateTime;
 
 @Named("OrderProcessor")
 @Scope("prototype")
@@ -67,6 +68,7 @@ public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDe
     } else if (msg instanceof SequenceOrder) {
       Order order = ((SequenceOrder) msg).order;
       log.info("Order id generated: {}, for order: {}", order.getOrderId(), order);
+      order.setExecutionDate(LocalDateTime.now());
       persist(order, this::updateState);
 
     } else if (msg instanceof PersistedOrder) {
@@ -80,6 +82,7 @@ public class OrderProcessorActor extends UntypedPersistentActorWithAtLeastOnceDe
 
     } else if (msg instanceof BatchCompleted) {
       log.info("Batch has been completed. Id = '{}'", ((BatchCompleted) msg).id);
+
     } else {
       unhandled(msg);
     }

@@ -4,16 +4,16 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="tutorial.dal.OrderDao">
     <insert id="saveOrder">
-        INSERT INTO OrderLog (orderId, executionDate, orderType, executionPrice, symbol, userId)
+        INSERT INTO OrderLog (orderId, executionDate, orderType, executionPrice, symbol, userId, quantity)
         VALUES (
-            #{orderId}, #{executionDate}, #{orderType}, #{executionPrice}, #{symbol}, #{userId}
+            #{orderId}, #{executionDate}, #{orderType}, #{executionPrice}, #{symbol}, #{userId}, #{quantity}
         )
     </insert>
 
     <resultMap id="orders" type="tutorial.om.Order">
         <id column="orderId" property="orderId"/>
         <result column="orderType" property="orderType"/>
-        <!--<result column="executionDate" property="executionDate"/>-->
+        <result column="executionDate" property="executionDate"/>
         <result column="executionPrice" property="executionPrice"/>
         <result column="symbol" property="symbol"/>
         <result column="userId" property="userId"/>
@@ -25,13 +25,16 @@
     <resultMap id="executions" type="tutorial.om.Execution">
         <id column="executionId" property="executionId"/>
         <result column="orderId" property="orderId"/>
-        <!--<result column="executionDate" property="executionDate" javaType="java.util.Date" jdbcType="TIMESTAMP" typeHandler="SqlTimestampTypeHandler"/>-->
+        <result column="executionDate" property="executionDate"/>
         <result column="quantity" property="quantity"/>
     </resultMap>
 
     <select id="getOrders" resultMap="orders">
-        SELECT *
-        FROM OrderLog;
+        SELECT
+            o.*,
+            e.executionId, e.quantity
+        FROM OrderLog o
+        LEFT JOIN OrderExecution e ON o.orderId = e.orderId;
     </select>
 
     <update id="completeBatch">

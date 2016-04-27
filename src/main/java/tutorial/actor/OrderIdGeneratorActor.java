@@ -41,7 +41,7 @@ class SequenceOrder {
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
+    return MoreObjects.toStringHelper(this).omitNullValues()
             .add("order", order)
             .toString();
   }
