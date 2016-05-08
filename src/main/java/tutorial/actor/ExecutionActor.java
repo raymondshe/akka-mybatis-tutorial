@@ -74,7 +74,7 @@ class ExecuteOrder {
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
+    return MoreObjects.toStringHelper(this).omitNullValues()
             .add("orderId", orderId)
             .add("quantity", quantity)
             .toString();

@@ -24,7 +24,7 @@ import static tutorial.spring.SpringExtension.SpringExtProvider;
 @ComponentScan
 @Configuration
 public class Config {
-  private static final int PERSISTENCE_ROUTEE_COUNT = 5;
+  private static final int PERSISTENCE_ROUTES_COUNT = 5;
 
   @Autowired
   private ApplicationContext applicationContext;
@@ -101,7 +101,7 @@ public class Config {
   @Named("Persistence")
   public ActorPath persistence() {
     return actorSystem().actorOf(
-            new RoundRobinPool(PERSISTENCE_ROUTEE_COUNT).props(SpringExtProvider.get(actorSystem()).props("Persistence")),
+            new RoundRobinPool(PERSISTENCE_ROUTES_COUNT).props(SpringExtProvider.get(actorSystem()).props("Persistence")),
             "persistenceRouter"
     ).path();
   }
