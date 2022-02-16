@@ -8,4 +8,6 @@ Tutorial application for Akka-actor, persistence and Mybatis
 5. Spring as ActorRef dependency injector
 
 
-Tools required: java8, scala, mysql database, maven
+Tools required: java11, scala, mysql database, maven
+
+Because leveldb jni requires amd64 libs, it wouldn't work in M1 apple machines unless you installed java amd64 distribution.
