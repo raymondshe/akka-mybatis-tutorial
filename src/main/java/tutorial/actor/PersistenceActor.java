@@ -1,7 +1,7 @@
 package tutorial.actor;
 
 import akka.actor.Props;
-import akka.actor.UntypedActor;
+import akka.actor.UntypedAbstractActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.Creator;
@@ -17,7 +17,7 @@ import java.util.Random;
 
 @Named("Persistence")
 @Scope("prototype")
-public class PersistenceActor extends UntypedActor {
+public class PersistenceActor extends UntypedAbstractActor {
   private LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
   private OrderDao orderDao;

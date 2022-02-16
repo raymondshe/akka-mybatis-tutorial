@@ -2,7 +2,7 @@ package tutorial.actor;
 
 import akka.actor.ActorPath;
 import akka.actor.Props;
-import akka.actor.UntypedActor;
+import akka.actor.UntypedAbstractActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.Creator;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Named("Execution")
 @Scope("prototype")
-public class ExecutionActor extends UntypedActor {
+public class ExecutionActor extends UntypedAbstractActor {
   private LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
   private ActorPath persistence;

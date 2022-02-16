@@ -1,6 +1,6 @@
 package tutorial.actor;
 
-import akka.actor.UntypedActor;
+import akka.actor.UntypedAbstractActor;
 import com.google.common.base.MoreObjects;
 import org.springframework.context.annotation.Scope;
 import tutorial.om.Order;
@@ -9,7 +9,7 @@ import javax.inject.Named;
 
 @Named("OrderIdGenerator")
 @Scope("prototype")
-public class OrderIdGeneratorActor extends UntypedActor {
+public class OrderIdGeneratorActor extends UntypedAbstractActor {
   private long seqNo;
 
   @Override

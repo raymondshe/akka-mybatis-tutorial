@@ -2,10 +2,12 @@ package tutorial.actor
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
-import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.flatspec.AnyFlatSpecLike
+import org.scalatest.matchers.should.Matchers
 import tutorial.gateway.OrderUtil
 
-class ITOrderIdGeneratorActor extends TestKit(ActorSystem("AkkaJavaSpring")) with FlatSpecLike with ImplicitSender
+class ITOrderIdGeneratorActor extends TestKit(ActorSystem("AkkaJavaSpring")) with AnyFlatSpecLike with ImplicitSender
   with BeforeAndAfterAll with Matchers {
   behavior of "OrderIdGeneratorActor"
 

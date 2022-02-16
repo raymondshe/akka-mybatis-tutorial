@@ -2,13 +2,15 @@ package tutorial.actor
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
-import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.flatspec.AnyFlatSpecLike
+import org.scalatest.matchers.should.Matchers
 import tutorial.gateway.OrderUtil._
 
 import scala.language.postfixOps
 import scala.util.Random
 
-class ITOrderProcessorActor extends TestKit(ActorSystem("AkkaJavaSpring")) with FlatSpecLike with ImplicitSender
+class ITOrderProcessorActor extends TestKit(ActorSystem("AkkaJavaSpring")) with AnyFlatSpecLike with ImplicitSender
   with BeforeAndAfterAll with Matchers {
 
   it should "generate id and persist incoming order" in {

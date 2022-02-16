@@ -5,13 +5,14 @@ import javax.inject.{Inject, Named}
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit, TestKitBase}
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.{BeforeAndAfterAll, FlatSpecLike}
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.flatspec.AnyFlatSpecLike
 import org.springframework.context.annotation._
 import tutorial.Config
 import tutorial.dal.OrderDao
 import tutorial.spring.SpringExtension._
 
-class ITOrderGateway extends TestKitBase with FlatSpecLike with ImplicitSender with BeforeAndAfterAll with MockFactory {
+class ITOrderGateway extends TestKitBase with AnyFlatSpecLike with ImplicitSender with BeforeAndAfterAll with MockFactory {
   lazy val ctx: AnnotationConfigApplicationContext = new AnnotationConfigApplicationContext() {
     register(classOf[TestConfig])
     refresh()
@@ -27,7 +28,7 @@ class ITOrderGateway extends TestKitBase with FlatSpecLike with ImplicitSender w
     val orderDao = ctx.getBean(classOf[OrderDao])
     val orderGateway = ctx.getBean(classOf[OrderGateway])
     //when
-    orderDao.saveOrder _ expects * atLeastOnce()
+    (orderDao.saveOrder _).expects(*).atLeastOnce()
     orderGateway.placeOrder()
     //then
     Thread.sleep(3000)
@@ -36,7 +37,7 @@ class ITOrderGateway extends TestKitBase with FlatSpecLike with ImplicitSender w
 
 @Import(Array(classOf[Config]))
 @Configuration
-class TestConfig extends FlatSpecLike with MockFactory {
+class TestConfig extends AnyFlatSpecLike with MockFactory {
   @Inject
   implicit var system: ActorSystem = null
 

@@ -2,6 +2,7 @@ package tutorial;
 
 import akka.actor.ActorSystem;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import scala.concurrent.ExecutionContextExecutor;
@@ -20,7 +21,7 @@ public class App {
 
   public static void main(String[] args) throws InterruptedException {
     SpringApplication app = new SpringApplication(App.class);
-    app.setWebEnvironment(false);
+    app.setWebApplicationType(WebApplicationType.NONE);
     Optional<ConfigurableApplicationContext> contextOpt = Optional.empty();
 
     try {
@@ -30,7 +31,7 @@ public class App {
       waitForPersistence(context);
       setBatchCompletionTime(context);
     } finally {
-      contextOpt.map(c -> c.getBean(ActorSystem.class)).ifPresent(ActorSystem::shutdown);
+      contextOpt.map(c -> c.getBean(ActorSystem.class)).ifPresent(ActorSystem::terminate);
     }
   }
 

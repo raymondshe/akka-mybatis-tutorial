@@ -3,13 +3,15 @@ package tutorial.actor
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.flatspec.AnyFlatSpecLike
+import org.scalatest.matchers.should.Matchers
 import tutorial.dal.OrderDao
 import tutorial.gateway.OrderUtil
 
 import scala.util.Random
 
-class ITPersistenceActor extends TestKit(ActorSystem("AkkaJavaSpring")) with FlatSpecLike with ImplicitSender
+class ITPersistenceActor extends TestKit(ActorSystem("AkkaJavaSpring")) with AnyFlatSpecLike with ImplicitSender
   with BeforeAndAfterAll with Matchers with MockFactory {
   behavior of "PersistenceActor"
 
